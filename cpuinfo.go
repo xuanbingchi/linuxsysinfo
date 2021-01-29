@@ -29,7 +29,7 @@ type CPUInfo struct {
 }
 
 func CreatCPUInfo() (*CPUInfo, error) {
-	i, err := getTwoColumns(ProcCpuinfoFile)
+	i, err := getInfo1(ProcCpuinfoFile)
 	if err != nil {
 		return nil, err
 	}
