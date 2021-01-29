@@ -1,0 +1,24 @@
+cpu			: sw
+cpu model		: sw
+cpu variation		: 1
+cpu revision		: SW6A
+cpu serial number	: 
+system type		: Aere
+system variation	: Aere
+system revision		: 0
+system serial number	: 
+CPU frequency [MHz]	: 1600.00 
+page size [bytes]	: 8192
+phys. address bits	: 48
+BogoMIPS		: 3200.00
+kernel unaligned acc	: 1 (pc=ffffffff80e0a9b4,va=fffffc03b7005eba)
+user unaligned acc	: 83245640 (pc=20001033130,va=20009a07e9b)
+platform string		: N/A
+cpus detected		: 16
+cpus active		: 16
+cpu active mask		: 000000000000ffff
+cpus core_start		: 000000000000ffff
+L1 Icache		: 32K, 4-way, 128b line
+L1 Dcache		: 32K, 4-way, 128b line
+L2 cache		: 512K, 8-way, 128b line
+L3 cache		: 32768K, 8-way, 128b line
