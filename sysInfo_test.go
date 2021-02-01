@@ -24,10 +24,13 @@ func TestCreatMemInfo(t *testing.T) {
 	t.Log(c)
 }
 
-func TestGetInfo3(t *testing.T) {
+func TestCreatIfConfigInfos(t *testing.T) {
+	i, err := CreatIfConfigInfos()
+	if err != nil {
+		t.Fatal(err)
+	}
 
-	getInfo3("")
-
+	t.Log(i)
 }
 
 /*
