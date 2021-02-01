@@ -2,103 +2,83 @@ package linuxsysinfo
 
 import (
 	"bufio"
+	"bytes"
+	"os/exec"
 	"regexp"
-	"strings"
 )
 
 var re = []*regexp.Regexp{
-	0: regexp.MustCompile(`^([\w-]+): flags=[\d]+<([\w,]+)>  mtu ([\d]+)$`),
-	1: regexp.MustCompile(`^ +inet ([\d.]+)  netmask ([\d.]+)  broadcast ([\d.]+)$`),
-	2: regexp.MustCompile(`^ +inet ([\d.]+)  netmask ([\d.]+)$`),
+	0:  regexp.MustCompile(`^([\w-]+): flags=[\d]+<([\w,]+)> +mtu ([\d]+)$`),
+	1:  regexp.MustCompile(`^ +inet ([\d.]+) +netmask ([\d.]+) +broadcast ([\d.]+)$`),
+	2:  regexp.MustCompile(`^ +inet ([\d.]+) +netmask ([\d.]+)$`),
+	3:  regexp.MustCompile(`^ +inet6 ([\d\w:]+) +prefixlen ([\d]+) +scopeid ([\d\w.<>]+)$`),
+	4:  regexp.MustCompile(`^ +ether ([\d\w:]+) +txqueuelen ([\d]+) +\(([\w]+)\)$`),
+	5:  regexp.MustCompile(`^ +loop (.+)$`),
+	6:  regexp.MustCompile(`^ +RX packets ([\d]+) +bytes ([\d]+) \((.+)\)$`),
+	7:  regexp.MustCompile(`^ +RX errors ([\d]+) +dropped ([\d]+) +overruns ([\d]+) +frame ([\d]+)$`),
+	8:  regexp.MustCompile(`^ +TX packets ([\d]+) +bytes ([\d]+) \((.+)\)$`),
+	9:  regexp.MustCompile(`^ +TX errors +([\d]+) +dropped +([\d]+) +overruns +([\d]+) +carrier +([\d]+) +collisions ([\d]+)$`),
+	10: regexp.MustCompile(`^ +device memory ([\d\w-]+)$`),
 }
 
 type IfConfigInfo struct {
-	Name      string
-	Flags     string
-	Mtu       string
+	Name  string
+	Flags string
+	Mtu   string
+
 	Inet      string
 	Netmask   string
 	Broadcast string
+
+	Inet6     string
+	Prefixlen string
+	Scopeid   string
+
+	Ether          string
+	Txqueuelen     string
+	Txqueuelen_des string
+	Loop           string
+
+	RX_Packets       string
+	RX_Packets_bytes string
+	RX_Packets_des   string
+	RX_errors        string
+	RX_dropped       string
+	RX_overruns      string
+	RX_frame         string
+
+	TX_Packets       string
+	TX_Packets_bytes string
+	TX_Packets_des   string
+	TX_errors        string
+	TX_dropped       string
+	TX_overruns      string
+	TX_carrier       string
+	TX_collisions    string
+
+	Device_memory string
 }
 
 func CreatIfConfigInfos() ([]IfConfigInfo, error) {
-	//command := exec.Command("/bin/bash", "-c", "ifconfig")
-	//txt, err := command.CombinedOutput()
-	//if err != nil {
-	//	return nil, err
-	//}
+	command := exec.Command("/bin/bash", "-c", "ifconfig")
+	txt, err := command.CombinedOutput()
+	if err != nil {
+		return nil, err
+	}
 
-	txt2 := `enP1p38s0f0: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500
-        inet 192.168.2.254  netmask 255.255.255.0  broadcast 192.168.2.255
-        ether 6c:b3:11:41:65:90  txqueuelen 1000  (Ethernet)
-        RX packets 0  bytes 0 (0.0 B)
-        RX errors 0  dropped 0  overruns 0  frame 0
-        TX packets 0  bytes 0 (0.0 B)
-        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
-        device memory 0xf0e0300000-f0e031ffff
-
-enP1p38s0f1: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500
-        inet 192.168.3.254  netmask 255.255.255.0  broadcast 192.168.3.255
-        ether 6c:b3:11:41:65:91  txqueuelen 1000  (Ethernet)
-        RX packets 0  bytes 0 (0.0 B)
-        RX errors 0  dropped 0  overruns 0  frame 0
-        TX packets 0  bytes 0 (0.0 B)
-        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
-        device memory 0xf0e0320000-f0e033ffff
-
-enP1p39s0f0: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500
-        inet 192.168.4.254  netmask 255.255.255.0  broadcast 192.168.4.255
-        ether 6c:b3:11:41:65:94  txqueuelen 1000  (Ethernet)
-        RX packets 0  bytes 0 (0.0 B)
-        RX errors 0  dropped 0  overruns 0  frame 0
-        TX packets 0  bytes 0 (0.0 B)
-        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
-        device memory 0xf0e0400000-f0e04fffff
-
-enP1p39s0f1: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
-        inet 192.168.16.134  netmask 255.255.255.0  broadcast 192.168.16.255
-        inet6 fe80::6eb3:11ff:fe41:6595  prefixlen 64  scopeid 0x20<link>
-        ether 6c:b3:11:41:65:95  txqueuelen 1000  (Ethernet)
-        RX packets 23538432  bytes 3831224774 (3.5 GiB)
-        RX errors 0  dropped 4  overruns 0  frame 0
-        TX packets 4906291  bytes 4291056996 (3.9 GiB)
-        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
-        device memory 0xf0e0500000-f0e05fffff
-
-enP1p43s0: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500
-        inet 192.168.1.254  netmask 255.255.255.0  broadcast 192.168.1.255
-        inet6 fe80::2e0:3ff:fe50:c  prefixlen 64  scopeid 0x20<link>
-        ether 00:e0:03:50:00:0c  txqueuelen 1000  (Ethernet)
-        RX packets 1321  bytes 88845 (86.7 KiB)
-        RX errors 0  dropped 0  overruns 0  frame 0
-        TX packets 132  bytes 16734 (16.3 KiB)
-        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
-        device memory 0xf0e0b00000-f0e0b1ffff
-
-lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
-        inet 127.0.0.1  netmask 255.0.0.0
-        inet6 ::1  prefixlen 128  scopeid 0x10<host>
-        loop  txqueuelen 1  (Local Loopback)
-        RX packets 282655573  bytes 68290186896 (63.6 GiB)
-        RX errors 0  dropped 0  overruns 0  frame 0
-        TX packets 282655573  bytes 68290186896 (63.6 GiB)
-        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
-`
-
-	tt := strings.Split(txt2, "\n\n")
-
+	tt := bytes.Split(txt, []byte("\n\n"))
 	i := make([]IfConfigInfo, 0, len(tt))
 	for _, s := range tt {
-		i = append(i, *ifconfigParse(s))
+		i = append(i, *ifConfigParse(s))
 	}
 
 	return i, nil
 }
 
-func ifconfigParse(txt string) *IfConfigInfo {
+func ifConfigParse(txt []byte) *IfConfigInfo {
 	i := new(IfConfigInfo)
 
-	s := bufio.NewScanner(strings.NewReader(txt))
+	s := bufio.NewScanner(bytes.NewReader(txt))
 	var isContinue = false
 	var t string
 	for index, r := range re {
@@ -127,7 +107,36 @@ func ifconfigParse(txt string) *IfConfigInfo {
 			i.Inet = p[1]
 			i.Netmask = p[2]
 		case 3:
+			i.Inet6 = p[1]
+			i.Prefixlen = p[2]
+			i.Scopeid = p[3]
 		case 4:
+			i.Ether = p[1]
+			i.Txqueuelen = p[2]
+			i.Txqueuelen_des = p[3]
+		case 5:
+			i.Loop = p[1]
+		case 6:
+			i.RX_Packets = p[1]
+			i.RX_Packets_bytes = p[2]
+			i.RX_Packets_des = p[3]
+		case 7:
+			i.RX_errors = p[1]
+			i.RX_dropped = p[2]
+			i.RX_overruns = p[3]
+			i.RX_frame = p[4]
+		case 8:
+			i.TX_Packets = p[1]
+			i.TX_Packets_bytes = p[2]
+			i.TX_Packets_des = p[3]
+		case 9:
+			i.TX_errors = p[1]
+			i.TX_dropped = p[2]
+			i.TX_overruns = p[3]
+			i.TX_carrier = p[4]
+			i.TX_collisions = p[5]
+		case 10:
+			i.Device_memory = p[1]
 		}
 	}
 

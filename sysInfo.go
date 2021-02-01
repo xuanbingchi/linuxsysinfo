@@ -7,11 +7,8 @@ import (
 )
 
 const (
-	//ProcMeminfoFile     = "/proc/meminfo"
-	//ProcCpuinfoFile     = "/proc/cpuinfo"
-
-	ProcMeminfoFile = `C:\gopath\work\linuxsysinfo\example\meminfo`
-	ProcCpuinfoFile = `C:\gopath\work\linuxsysinfo\example\cpuinfo`
+	ProcMeminfoFile = "/proc/meminfo"
+	ProcCpuinfoFile = "/proc/cpuinfo"
 )
 
 type info map[string]string
@@ -46,12 +43,11 @@ func getInfo1(file string) (info, error) {
 
 func getInfo2(file string) (info, error) {
 	info := make(info)
-	m := regexp.MustCompile(": +")
-
+	m := regexp.MustCompile(`^([\w_\(\)]+): +([\d]+)[\D]*$`)
 	err := getInfo0(file, func(text string) {
-		sl := m.Split(text, 2)
-		if sl != nil && len(sl) == 2 {
-			info[sl[0]] = sl[1]
+		sl := m.FindStringSubmatch(text)
+		if sl != nil && len(sl) == 3 {
+			info[sl[1]] = sl[2]
 		}
 	})
 
