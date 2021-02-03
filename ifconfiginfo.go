@@ -69,7 +69,9 @@ func CreatIfConfigInfos() ([]IfConfigInfo, error) {
 	tt := bytes.Split(txt, []byte("\n\n"))
 	i := make([]IfConfigInfo, 0, len(tt))
 	for _, s := range tt {
-		i = append(i, *ifConfigParse(s))
+		if len(s) != 0 {
+			i = append(i, *ifConfigParse(s))
+		}
 	}
 
 	return i, nil

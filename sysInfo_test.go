@@ -1,26 +1,33 @@
 package linuxsysinfo
 
 import (
-	"regexp"
+	"encoding/json"
 	"testing"
 )
 
 func TestCreatCPUInfo(t *testing.T) {
-	c, err := CreatCPUInfo()
+	i, err := CreatCPUInfo()
 	if err != nil {
 		t.Fatal(err)
 	}
-
-	t.Log(c)
+	ii, err := json.MarshalIndent(i, "", "\t")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(string(ii))
 }
 
 func TestCreatMemInfo(t *testing.T) {
-	c, err := CreatMemInfo()
+	i, err := CreatMemInfo()
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	t.Log(c)
+	ii, err := json.MarshalIndent(i, "", "\t")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(string(ii))
 }
 
 func TestCreatIfConfigInfos(t *testing.T) {
@@ -29,13 +36,22 @@ func TestCreatIfConfigInfos(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	t.Log(i)
+	ii, err := json.MarshalIndent(i, "", "\t")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(string(ii))
 }
 
-func TestName(t *testing.T) {
+func TestCreatVersionInfo(t *testing.T) {
+	i, err := CreatVersionInfo()
+	if err != nil {
+		t.Fatal(err)
+	}
 
-	m := regexp.MustCompile(`^([\w_\(\)]+): +([\d]+)[\D]*$`)
-	a := m.FindStringSubmatch("AnonHugePages:   1769472 kB")
-	b := m.FindStringSubmatch("HugePages_Total:       0")
-	t.Log(a, b)
+	ii, err := json.MarshalIndent(i, "", "\t")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(string(ii))
 }

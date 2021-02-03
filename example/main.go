@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/xml"
 	"fmt"
-	"linuxsysinfo"
+	"github.com/xuanbingchi/linuxsysinfo"
 )
 
 func main() {
@@ -11,6 +11,7 @@ func main() {
 		CPUInfo       *linuxsysinfo.CPUInfo
 		MemInfo       *linuxsysinfo.MemInfo
 		IfConfigInfos []linuxsysinfo.IfConfigInfo
+		versionInfo   *linuxsysinfo.VersionInfo
 	}
 
 	i := new(info)
@@ -24,6 +25,10 @@ func main() {
 		panic(err)
 	}
 	i.IfConfigInfos, err = linuxsysinfo.CreatIfConfigInfos()
+	if err != nil {
+		panic(err)
+	}
+	i.versionInfo, err = linuxsysinfo.CreatVersionInfo()
 	if err != nil {
 		panic(err)
 	}
