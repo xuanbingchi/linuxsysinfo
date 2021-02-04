@@ -1,28 +1,21 @@
-# linuxsysinfo
+# 获取linux系统信息
 
-获取Linux系统信息
-
+##获取手段
 使用的系统文件：
-```
-/proc/meminfo
-/proc/cpuinfo
-```
+- /proc/meminfo
+- /proc/cpuinfo
 
 使用的系统命令：
-```
-version
-ifconfig
-df -BKB -T
-```
+- version
+- ifconfig
+- df -BKB -T
 
 使用golang库：
-```
-net
-```
+- net
 
 ##事例
 ###CPU信息
-```
+```json
 {
     "Cpu": "sw",
     "CpuModel": "sw",
@@ -51,7 +44,7 @@ net
 }
 ```
 ###内存信息
-```
+```json
 {
     "MemTotal": 64883328,
     "MemFree": 53045344,
@@ -96,7 +89,7 @@ net
   }
 ```
 ###系统版本信息
-```
+```json
 {
     "Name": "NeoKylin Server",
     "Platform": "5.0_U2",
@@ -105,7 +98,7 @@ net
   }
 ```
 ###硬盘信息
-```
+```json
 [
     {
       "Filesystem": "devtmpfs",
@@ -137,7 +130,7 @@ net
   ]
 ```
 ###IP信息
-```
+```json
 [
     {
       "Index": 1,
