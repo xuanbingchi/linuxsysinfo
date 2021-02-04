@@ -55,3 +55,16 @@ func TestCreatVersionInfo(t *testing.T) {
 	}
 	t.Log(string(ii))
 }
+
+func TestCreatDfInfo(t *testing.T) {
+	i, err := CreatDfInfo()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	ii, err := json.MarshalIndent(i, "", "\t")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(string(ii))
+}

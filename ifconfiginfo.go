@@ -3,7 +3,6 @@ package linuxsysinfo
 import (
 	"bufio"
 	"bytes"
-	"os/exec"
 	"regexp"
 )
 
@@ -60,8 +59,7 @@ type IfConfigInfo struct {
 }
 
 func CreatIfConfigInfos() ([]IfConfigInfo, error) {
-	command := exec.Command("/bin/bash", "-c", "ifconfig")
-	txt, err := command.CombinedOutput()
+	txt, err := cmd("ifconfig")
 	if err != nil {
 		return nil, err
 	}

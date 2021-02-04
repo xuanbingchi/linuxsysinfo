@@ -3,7 +3,9 @@ package linuxsysinfo
 import (
 	"bufio"
 	"os"
+	"os/exec"
 	"regexp"
+	"strconv"
 )
 
 const (
@@ -52,4 +54,16 @@ func getInfo2(file string) (info, error) {
 	})
 
 	return info, err
+}
+
+func tryParseInt(s string) int {
+	i, err := strconv.Atoi(s)
+	if err != nil {
+		return 0
+	}
+	return i
+}
+
+func cmd(c string) ([]byte, error) {
+	return exec.Command("/bin/bash", "-c", c).CombinedOutput()
 }

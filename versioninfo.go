@@ -3,7 +3,6 @@ package linuxsysinfo
 import (
 	"bufio"
 	"bytes"
-	"os/exec"
 )
 
 type VersionInfo struct {
@@ -15,8 +14,7 @@ type VersionInfo struct {
 
 func CreatVersionInfo() (*VersionInfo, error) {
 	v := new(VersionInfo)
-	command := exec.Command("/bin/bash", "-c", "version")
-	txt, err := command.CombinedOutput()
+	txt, err := cmd("version")
 	if err != nil {
 		return nil, err
 	}

@@ -1,7 +1,5 @@
 package linuxsysinfo
 
-import "strconv"
-
 // Mem information.
 type MemInfo struct {
 	MemTotal        int //MemTotal
@@ -95,12 +93,4 @@ func CreatMemInfo() (*MemInfo, error) {
 	c.Hugepagesize = tryParseInt(i["Hugepagesize"])
 
 	return c, nil
-}
-
-func tryParseInt(s string) int {
-	i, err := strconv.Atoi(s)
-	if err != nil {
-		return 0
-	}
-	return i
 }
